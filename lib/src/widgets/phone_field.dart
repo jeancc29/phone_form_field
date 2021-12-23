@@ -136,9 +136,20 @@ class _PhoneFieldState extends State<PhoneField> {
     super.dispose();
   }
 
-  void selectCountry() async {
+  void selectCountry([Offset offset = const Offset(100, 100)]) async {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
-    final selected = await widget.selectorNavigator.navigate(context);
+    // final selected = await widget.selectorNavigator.navigate(context);
+    print("Phone_field.art selectCountry1 ${widget.selectorNavigator}");
+    print("Phone_field.art selectCountry2 ${widget.selectorNavigator is PopupNavigator}");
+    print("Phone_field.art selectCountry3 hashCode ${widget.selectorNavigator.hashCode}");
+    print("Phone_field.art selectCountry4 runtimeType ${widget.selectorNavigator.runtimeType}");
+    var selected;
+    if(widget.selectorNavigator is PopupNavigator){
+      var selector = widget.selectorNavigator as PopupNavigator;
+      selected = await selector.navigate(context, offset);
+    }else
+      selected = await widget.selectorNavigator.navigate(context);
+
     if (selected != null) {
       controller.isoCode = selected.isoCode;
     }
@@ -218,7 +229,7 @@ class _PhoneFieldState extends State<PhoneField> {
     return InkWell(
       key: Key('country-code-overlay'),
       onTap: () {},
-      onTapDown: (_) => selectCountry(),
+      onTapDown: (_) => selectCountry(_.globalPosition),
       child: ConstrainedBox(
         // we set the size to input size
         constraints: BoxConstraints(

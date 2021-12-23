@@ -205,6 +205,10 @@ class _PhoneFormFieldScreenState extends State<PhoneFormFieldScreen> {
                                 child: Text('Dialog'),
                                 value: const DialogNavigator(),
                               ),
+                              DropdownMenuItem(
+                                child: Text('Popup'),
+                                value: const PopupNavigator(),
+                              ),
                             ],
                           ),
                         ],

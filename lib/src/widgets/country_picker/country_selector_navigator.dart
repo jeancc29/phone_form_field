@@ -1,5 +1,7 @@
+import 'package:circle_flags/circle_flags.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:phone_form_field/src/helpers/country_translator.dart';
 
 import '../../models/all_countries.dart';
 import '../../models/country.dart';
@@ -206,5 +208,98 @@ class DraggableModalBottomSheetNavigator extends CountrySelectorNavigator {
       ),
       isScrollControlled: true,
     );
+  }
+}
+
+
+class PopupNavigator extends CountrySelectorNavigator {
+  const PopupNavigator(
+      {List<Country>? countries,
+      List<String>? favorites,
+      bool addSeparator = true,
+      bool showCountryCode = true,
+      bool sortCountries = false,
+      String? noResultMessage,
+      bool searchAutofocus = kIsWeb})
+      : super(
+          countries: countries,
+          favorites: favorites,
+          addSeparator: addSeparator,
+          showCountryCode: showCountryCode,
+          sortCountries: sortCountries,
+          noResultMessage: noResultMessage,
+          searchAutofocus: searchAutofocus,
+        );
+
+  @override
+  Future<Country?> navigate(BuildContext context, [Offset offset = const Offset(100, 100)]) {
+    // return showDialog(
+    //   context: context,
+    //   builder: (_) => Dialog(
+    //     child: _getCountrySelector(
+    //       onCountrySelected: (country) => Navigator.pop(context, country),
+    //     ),
+    //   ),
+    // );
+
+    double left = offset.dx;
+    double top = offset.dy;
+    var countriesTmp = countries ?? allCountries;
+
+    return showMenu<Country>(
+        context: context,
+        position: RelativeRect.fromLTRB(left, top, 100, 100),
+        items: 
+        // [
+        //   PopupMenuItem(
+        //     value: 1,
+        //     child: Text("View"),
+        //   ),
+        //   PopupMenuItem(
+        //      value: 2
+        //     child: Text("Edit"),
+        //   ),
+        //   PopupMenuItem(
+        //     value: 3
+        //     child: Text("Delete"),
+        //   ),
+        // ],
+        countriesTmp.asMap().map((index, value){
+          
+
+     
+        Country country = countriesTmp[index];
+
+        return MapEntry(index, PopupMenuItem(
+          value: value,
+          child: ListTile(
+            key: Key(country.isoCode),
+            leading: CircleFlag(
+              country.isoCode,
+              size: 40,
+            ),
+            title: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                CountryTranslator.localisedName(context, country),
+                textAlign: TextAlign.start,
+              ),
+            ),
+            subtitle: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      country.displayCountryCode,
+                      textDirection: TextDirection.ltr,
+                      textAlign: TextAlign.start,
+                    ),
+                  )
+               ,
+            // onTap: () => onTap(country),
+          ),
+        ));
+        }).values.toList()
+        ,
+        elevation: 8.0,
+      );
   }
 }
